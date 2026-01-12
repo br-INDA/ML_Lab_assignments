@@ -1,2 +1,2 @@
-# ML_Lab_assignment1
+# ML_Lab_assignments
 python codes
