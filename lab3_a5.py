@@ -1,4 +1,6 @@
 from scipy.spatial.distance import minkowski as scipy_minkowski
+import numpy as np
+
 def minkowski_distance(vector_1, vector_2, p):
     # The function computes the Minkowski distance btw two feature vectors for a given p value
     distance = np.sum(np.abs(vector_1 - vector_2) ** p) ** (1 / p)
