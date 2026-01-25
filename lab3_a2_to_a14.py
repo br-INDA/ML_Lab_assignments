@@ -1,65 +1,3 @@
-#assignment - 3
-
-#A1
-import numpy as np
-
-# Function to calculate dot product
-def calculate_dot_product(vector_a, vector_b):
-   
-    a = np.array(vector_a)
-    b = np.array(vector_b)
-    
-    dot_prod = 0
-    for i in range(len(a)):
-        dot_prod += a[i] * b[i]
-    
-    return dot_prod
-
-
-# Function to calculate Euclidean norm (length)
-def calculate_euclidean_norm(vector):
-   
-    vec = np.array(vector)
-    
-    sum_squares = 0
-    for i in range(len(vec)):
-        sum_squares += vec[i] ** 2
-    
-    return np.sqrt(sum_squares)
-
-
-# main program
-
-# defineing two vectors
-A = [3, 4, 5, 6]
-B = [1, 2, 3, 4]
-
-print("Vector A:", A)
-print("Vector B:", B)
-
-# dot product
-print("\n--- DOT PRODUCT ---")
-my_dot = calculate_dot_product(A, B)
-numpy_dot = np.dot(A, B)
-
-print(f"My function:    {my_dot}")
-print(f"NumPy function: {numpy_dot}")
-print(f"Match? {np.allclose(my_dot, numpy_dot)}")
-
-# euclidean norm
-print("\n--- EUCLIDEAN NORM ---")
-print("\nVector A:")
-my_norm_a = calculate_euclidean_norm(A)
-numpy_norm_a = np
-
-
-
-
-
-
-
-
-
 #A2
 import numpy as np
 
@@ -529,3 +467,173 @@ print("A12: Accuracy:", accuracy)
 print("A12: Precision:", precision)
 print("A12: Recall:", recall)
 print("A12: F1 Score:", f1_score)
+
+
+
+
+ 
+#A13
+def compute_confusion_matrix(y_actual, y_predicted):
+    # Computes TP, TN, FP, FN values
+    tp = tn = fp = fn = 0
+
+    for i in range(len(y_actual)):
+        if y_actual[i] == 1 and y_predicted[i] == 1:
+            tp += 1
+        elif y_actual[i] == 0 and y_predicted[i] == 0:
+            tn += 1
+        elif y_actual[i] == 0 and y_predicted[i] == 1:
+            fp += 1
+        elif y_actual[i] == 1 and y_predicted[i] == 0:
+            fn += 1
+
+    return tp, tn, fp, fn
+
+
+def calculate_accuracy(tp, tn, fp, fn):
+    return (tp + tn) / (tp + tn + fp + fn)
+
+
+def calculate_precision(tp, fp):
+    return tp / (tp + fp) if (tp + fp) != 0 else 0
+
+
+def calculate_recall(tp, fn):
+    return tp / (tp + fn) if (tp + fn) != 0 else 0
+
+
+def calculate_fbeta_score(precision, recall, beta=1):
+    """
+    F-beta score:
+    (1 + beta^2) * (P * R) / (beta^2 * P + R)
+    beta = 1 -> F1-score
+    beta < 1 -> precision is more important
+    beta > 1 -> recall is more important
+    """
+    b2 = beta ** 2
+    return ((1 + b2) * precision * recall) / (b2 * precision + recall) if (b2 * precision + recall) != 0 else 0
+
+
+# Using the small subset from A11
+y_predicted_custom_knn = custom_knn_predict(
+    X_train_small,
+    y_train_small,
+    X_test_small,
+    k=3
+)
+
+# Confusion Matrix values
+tp, tn, fp, fn = compute_confusion_matrix(y_test_small, y_predicted_custom_knn)
+
+# Metrics
+accuracy = calculate_accuracy(tp, tn, fp, fn)
+precision = calculate_precision(tp, fp)
+recall = calculate_recall(tp, fn)
+
+# Fβ scores
+f1_score = calculate_fbeta_score(precision, recall, beta=1)   # F1 Score
+f2_score = calculate_fbeta_score(precision, recall, beta=2)   # F2 Score (recall focus)
+
+# Display Results
+print("A13: Confusion Matrix Values")
+print("TP:", tp, "TN:", tn, "FP:", fp, "FN:", fn)
+
+print("\nA13: Performance Metrics")
+print("Accuracy:", accuracy)
+print("Precision:", precision)
+print("Recall:", recall)
+print("F1 Score (β=1):", f1_score)
+print("F2 Score (β=2):", f2_score)
+
+
+
+# A14
+import time
+
+def one_hot_encode(y, num_classes=2):
+    Y = np.zeros((len(y), num_classes))
+    for i in range(len(y)):
+        Y[i, y[i]] = 1
+    return Y
+
+
+def matrix_inversion_train(X_train, y_train):
+    
+    #Trains classifier using Matrix Inversion (Least Squares):
+    # Add bias term (column of ones)
+    Xb = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
+
+    # One-hot for binary classes
+    Y = one_hot_encode(y_train, num_classes=2)
+
+    # Compute weights using pseudo inverse
+    W = np.linalg.pinv(Xb) @ Y
+    return W
+
+
+def matrix_inversion_predict(X_test, W):
+    # Add bias term
+    Xb = np.hstack((np.ones((X_test.shape[0], 1)), X_test))
+
+    scores = Xb @ W
+    y_pred = np.argmax(scores, axis=1)
+    return y_pred
+
+
+def print_results(model_name, results_dict):
+    print(f"{model_name} Results")
+    print("TP:", results_dict["TP"], "TN:", results_dict["TN"],
+          "FP:", results_dict["FP"], "FN:", results_dict["FN"])
+    print("Accuracy :", results_dict["Accuracy"])
+    print("Precision:", results_dict["Precision"])
+    print("Recall   :", results_dict["Recall"])
+    print("F1 Score :", results_dict["F1"])
+
+Xtr = X_train_small
+ytr = y_train_small
+Xte = X_test_small
+yte = y_test_small
+
+#kNN
+start_knn = time.time()
+y_pred_knn = custom_knn_predict(Xtr, ytr, Xte, k=3)
+end_knn = time.time()
+
+tp, tn, fp, fn = compute_confusion_matrix(yte, y_pred_knn)
+acc = calculate_accuracy(tp, tn, fp, fn)
+prec = calculate_precision(tp, fp)
+rec = calculate_recall(tp, fn)
+f1 = calculate_f1_score(prec, rec)
+
+knn_results = {
+    "TP": tp, "TN": tn, "FP": fp, "FN": fn,
+    "Accuracy": acc, "Precision": prec, "Recall": rec, "F1": f1,
+    "Time": (end_knn - start_knn)
+}
+
+#Matrix Inversion Technique
+start_mi = time.time()
+W = matrix_inversion_train(Xtr, ytr)
+y_pred_mi = matrix_inversion_predict(Xte, W)
+end_mi = time.time()
+
+tp, tn, fp, fn = compute_confusion_matrix(yte, y_pred_mi)
+acc = calculate_accuracy(tp, tn, fp, fn)
+prec = calculate_precision(tp, fp)
+rec = calculate_recall(tp, fn)
+f1 = calculate_f1_score(prec, rec)
+
+mi_results = {
+    "TP": tp, "TN": tn, "FP": fp, "FN": fn,
+    "Accuracy": acc, "Precision": prec, "Recall": rec, "F1": f1,
+    "Time": (end_mi - start_mi)
+}
+
+# ---- Print Comparison ----
+print_results("Custom kNN", knn_results)
+print_results("Matrix Inversion", mi_results)
+
+print("kNN Time Taken :", knn_results["Time"])
+print("Matrix Inversion Time Taken:", mi_results["Time"])
+
+
