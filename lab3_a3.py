@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-
+import numpy as np
 #Calculates mean and variance of a feature vector
 def calculate_feature_statistics(feature_vector):
     
