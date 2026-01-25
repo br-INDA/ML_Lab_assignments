@@ -30,14 +30,3 @@ scipy_minkowski_distance = scipy_minkowski(
 # displaying the results
 print(" Custom Minkowski Distance (p = 3):", custom_minkowski_distance)
 print(" SciPy Minkowski Distance (p = 3):", scipy_minkowski_distance)
-
-
-
-
-
-
-
-
-
-
-#
