@@ -1,3 +1,4 @@
+##A1
 import numpy as np
 
 # Function to calculate dot product
@@ -34,8 +35,8 @@ B = [1, 2, 3, 4]
 print("Vector A:", A)
 print("Vector B:", B)
 
-# DOT PRODUCT
-print("\n--- DOT PRODUCT ---")
+# Dot Product
+print("\n Dot Product")
 my_dot = calculate_dot_product(A, B)
 numpy_dot = np.dot(A, B)
 
@@ -43,8 +44,8 @@ print(f"My function:    {my_dot}")
 print(f"NumPy function: {numpy_dot}")
 print(f"Match? {np.allclose(my_dot, numpy_dot)}")
 
-# EUCLIDEAN NORM
-print("\n--- EUCLIDEAN NORM ---")
+# Euclidean Norm
+print("\n Euclidean Norm")
 print("\nVector A:")
 my_norm_a = calculate_euclidean_norm(A)
 numpy_norm_a = np.linalg.norm(A)
